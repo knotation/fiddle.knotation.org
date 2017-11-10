@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Knotation Fiddle: Alpha!</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+@media (min-width: 992px) {
+  body .container .CodeMirror {
+    height: auto;
+  }
+}
+      .errors {width: .8em;}
+      .CodeMirror {border: 1px solid #aaa;}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Knotation Fiddle: Alpha!</h1>
+      <div id="input-pane" class="col-md-6">
+        <select id="output-select">
+          <option value="input-1">Input 1</option>
+        </select>
+        <textarea id="input-editor">@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+@prefix obo: <http://purl.obolibrary.org/obo/>
+@prefix kn: <https://knotation.org/>
+@prefix ex: <https://example.com/>
+
+: rdfs:label
+rdfs:label: label
+
+: kn:predicate/default-datatype
+label: default datatype
+default datatype: kn:datatype/datatype
+
+: rdf:type
+label: type
+default datatype: kn:datatype/link
+
+: obo:NCBITaxon_9615
+label: Canis lupus familiaris
+
+: obo:BFO_0000050
+label: part of
+default datatype: link
+
+: obo:UBERON_0000033
+label: head
+
+: ex:laika
+label: Laika
+label; @ru: Лайка
+type: Canis lupus familiaris
+
+: ex:laikas-head
+label: Laika's head
+type: head
+part of: Laika
+</textarea>
+      </div>
+      <div id="output-pane" class="col-md-6">
+        <select id="output-select">
+          <option value="ttl">Turtle</option>
+          <option value="nq">N-Quads</option>
+        </select>
+        <textarea id="output-editor">@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+@prefix obo: <http://purl.obolibrary.org/obo/>
+@prefix kn: <https://knotation.org/>
+@prefix ex: <https://example.com/>
+
+ex:laika
+  rdfs:label "Laika" ;
+  rdfs:label "Лайка"@ru ;
+  rdf:type obo:NCBITaxon_9612 .
+
+ex:laikas-head
+  rdfs:label "Laika's head" ;
+  rdf:type obo:UBERON_0000033 ;
+  obo:BFO_0000050 ex:laika .
+</textarea>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Knotation -->
+    <script src="resources/fiddle.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var input = knotation_editor.editor.fromSelector(
+        '#input-editor',
+        {mode: "knotation"}
+      );
+      var output = knotation_editor.editor.fromSelector(
+        '#output-editor',
+        {mode: "turtle"}
+      );
+    </script>
+  </body>
+</html>
