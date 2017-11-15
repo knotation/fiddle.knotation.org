@@ -14,10 +14,12 @@
           {:lang "en"}
           [:head
            [:title "fiddle.knotation"]
-           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]]
+           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
+           [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]]
           [:body
-           [:textarea {:class "before"}
-            "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+           [:div {:class "col-md-6"}
+            [:textarea {:class "before"}
+             "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 @prefix obo: <http://purl.obolibrary.org/obo/>
 @prefix kn: <https://knotation.org/>
@@ -53,9 +55,10 @@ type: Canis lupus familiaris
 label: Laika's head
 type: head
 part of: Laika
-"]
-           [:textarea {:class "after"}
-            "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+"]]
+           [:div {:class "col-md-6"}
+            [:textarea {:class "after"}
+             "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 @prefix obo: <http://purl.obolibrary.org/obo/>
 @prefix kn: <https://knotation.org/>
@@ -70,7 +73,7 @@ ex:laikas-head
   rdfs:label \"Laika's head\" ;
   rdf:type obo:UBERON_0000033 ;
   obo:BFO_0000050 ex:laika .
-"]])})
+"]]])})
 
 (defroutes main-routes
   (GET "/" [] fiddle)
