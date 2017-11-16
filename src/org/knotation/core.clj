@@ -17,7 +17,8 @@
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
            [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
            [:style
-            ".highlight { background-color: #f4f142; }"]]
+            ".current-subject { background-color: #91ff87; }
+.highlight { background-color: #f4f142; }"]]
           [:body
            [:div {:class "col-md-6"}
             [:textarea {:class "before"}
