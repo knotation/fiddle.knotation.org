@@ -14,8 +14,10 @@
           {:lang "en"}
           [:head
            [:title "fiddle.knotation"]
+           [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
            [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
-           [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]]
+           [:style
+            ".highlight { background-color: #f4f142; }"]]
           [:body
            [:div {:class "col-md-6"}
             [:textarea {:class "before"}
