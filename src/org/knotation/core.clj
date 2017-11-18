@@ -15,10 +15,7 @@
           [:head
            [:title "fiddle.knotation"]
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
-           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
-           [:style
-            ".current-subject { background-color: #91ff87; }
-.highlight { background-color: #f4f142; }"]]
+           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]]
           [:body
            [:div {:class "col-md-6"}
             [:textarea {:class "before"}
@@ -60,23 +57,7 @@ type: head
 part of: Laika
 "]]
            [:div {:class "col-md-6"}
-            [:textarea {:class "after"}
-             "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-@prefix obo: <http://purl.obolibrary.org/obo/>
-@prefix kn: <https://knotation.org/>
-@prefix ex: <https://example.com/>
-
-ex:laika
-  rdfs:label \"Laika\" ;
-  rdfs:label \"Лайка\"@ru ;
-  rdf:type obo:NCBITaxon_9612 .
-
-ex:laikas-head
-  rdfs:label \"Laika's head\" ;
-  rdf:type obo:UBERON_0000033 ;
-  obo:BFO_0000050 ex:laika .
-"]]])})
+            [:textarea {:class "after"}]]])})
 
 (defroutes main-routes
   (GET "/" [] fiddle)

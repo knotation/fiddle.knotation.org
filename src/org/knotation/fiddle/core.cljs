@@ -1,66 +1,87 @@
 (ns org.knotation.fiddle.core
+  (:import [goog.async Debouncer])
   (:require [clojure.set :as set]
+            [clojure.string :as string]
+
+            [org.knotation.api :as api]
+            [org.knotation.state :as st]
 
             [knotation-editor.editor :as ed]))
 
-(defn mode-of
-  [editor]
-  (.-name (.getMode editor)))
+(defn debounce [f interval]
+  (let [dbnc (Debouncer. f interval)]
+    ;; We use apply here to support functions of various arities
+    (fn [& args] (.apply (.-fire dbnc) dbnc (to-array args)))))
 
-(defn knotation-mode?
-  [editor]
-  (= "knotation" (mode-of editor)))
-
-(defn line-range [editor] (range 0 (- (.lineCount editor) 1)))
-
-(defn clear-line-highlights!
-  [& editors]
-  (doseq [editor editors]
-    (doseq [i (line-range editor)]
-      (.removeLineClass editor i "background"))))
-
-(defn highlight-line!
-  ([editor line] (highlight-line! editor line "highlight"))
-  ([editor line class]
-   (.addLineClass editor line "background" class)))
+(defn current-line
+  [ed]
+  (.-line (.getCursor ed)))
 
 (defn highlight-by-subject!
   [editor line]
-  (when (knotation-mode? editor)
+  (when (ed/knotation-mode? editor)
     (letfn [(handle-of [ln] (.getLineHandle editor ln))
             (subject-of [ln] (:subject @(.-stateAfter (handle-of ln))))
             (blank? [ln] (empty? (.-text (handle-of ln))))]
       (if-let [subject (and (not (blank? line)) (subject-of line))]
-        (doseq [i (line-range editor)]
+        (doseq [i (ed/line-range editor)]
           (when (and (= subject (subject-of i)) (not (blank? i)))
-            (highlight-line! editor i "current-subject")))))))
+            (ed/highlight-line! editor i "current-subject")))))))
 
 (defn cross->highlight!
   [line-map editor-a editor-b]
   (fn [_]
-    (clear-line-highlights! editor-a editor-b)
-    (let [ln-from (.-line (.getCursor editor-a))]
+    (ed/clear-line-highlights! editor-a editor-b)
+    (let [ln-from (current-line editor-a)]
       (when-let [ln-to (get line-map ln-from)]
-        (highlight-line! editor-a ln-from)
-        (highlight-line! editor-b ln-to)
-        (.scrollIntoView editor-b (clj->js {:line ln-to :ch 0}))))))
+        (ed/highlight-line! editor-a ln-from)
+        (ed/highlight-line! editor-b ln-to)
+        (ed/scroll-into-view! editor-b :line ln-to)))))
 
 (defn cross<->highlight!
   [line-map editor-a editor-b]
   (.on editor-a "cursorActivity"
-       (cross->highlight! line-map editor-a editor-b))
+       (cross->highlight! @line-map editor-a editor-b))
   (.on editor-b "cursorActivity"
-       (cross->highlight! (set/map-invert line-map) editor-b editor-a)))
+       (cross->highlight! (set/map-invert @line-map) editor-b editor-a)))
+
+(def line-map (atom {}))
+
+(defn compile-content-to
+  [source target]
+  (let [processed (api/run-operations [(api/kn (.getValue source)) {::api/operation-type :render ::st/format :ttl}])
+        result (string/join "\n" (filter identity (map (fn [e] (->> e ::st/output ::st/lines first)) processed)))
+        line-pairs (map (fn [e] [(->> e ::st/input ::st/line-number) (->> e ::st/output ::st/line-number)]) processed)]
+    (.setValue target result)
+    (reset! line-map (into {} line-pairs))))
 
 (.addEventListener
  js/document "DOMContentLoaded"
  (fn []
-   (let [before (ed/editor! ".before" :mode "knotation")
-         after (ed/editor! ".after" :mode "turtle")
-         line-map {0 0 1 1 2 2 3 3 4 4
-                   27 6 28 7 29 8 30 9
-                   32 11 33 12 34 13 35 14}]
-     (cross<->highlight! line-map before after)
-     (.on before "cursorActivity"
-          (fn [ed]
-            (highlight-by-subject! ed (.-line (.getCursor ed))))))))
+   (let [editor-a (ed/editor! ".before" :mode "knotation")
+         editor-b (ed/editor! ".after" :mode "turtle")]
+
+     (compile-content-to editor-a editor-b)
+
+     ;; (let [opts {::api/operation-type :render ::st/format :ttl}
+     ;;       processed (api/run-operations [(api/kn (.getValue editor-a)) opts])
+     ;;       result (string/join "\n" (filter identity (map (fn [e] (->> e ::st/output ::st/lines first)) processed)))
+     ;;       line-pairs (map (fn [e] [(->> e ::st/input ::st/line-number) (->> e ::st/output ::st/line-number)]) processed)]
+     ;;   (.setValue editor-b result)
+     ;;   (reset! line-map (into {} (map (fn [e][(->> e ::st/input ::st/line-number) (->> e ::st/output ::st/line-number)]) processed)))
+     ;;   ;; (.log js/console "NEW LINE-MAP" (clj->js ))
+     ;;   (doseq [p line-pairs]
+     ;;     (.log js/console "  " (clj->js p))))
+
+     (.on editor-a "changes"
+          (debounce
+           (fn [cs]
+             (let [ln (current-line editor-a)]
+               (compile-content-to editor-a editor-b)
+               (ed/highlight-line! editor-b ln)
+               (ed/scroll-into-view! editor-b :line ln)))
+           500))
+
+     (cross<->highlight! line-map editor-a editor-b)
+     (.on editor-a "cursorActivity"
+          (fn [ed] (highlight-by-subject! ed (.-line (.getCursor ed))))))))
