@@ -18,23 +18,25 @@
            [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]]
           [:body
            [:div {:class "col-md-6"}
+            [:select [:option "Input 1"]]
             [:textarea {:class "before"}
              "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 @prefix obo: <http://purl.obolibrary.org/obo/>
-@prefix kn: <https://knotation.org/>
+@prefix knp: <https://knotation.org/predicate/>
+@prefix knd: <https://knotation.org/datatype/>
 @prefix ex: <https://example.com/>
 
 : rdfs:label
 rdfs:label: label
 
-: kn:predicate/default-datatype
+: knp:default-datatype
 label: default datatype
-default datatype: kn:datatype/datatype
+default datatype: knd:datatype
 
 : rdf:type
 label: type
-default datatype: kn:datatype/link
+default datatype: knd:link
 
 : obo:NCBITaxon_9615
 label: Canis lupus familiaris
@@ -57,6 +59,9 @@ type: head
 part of: Laika
 "]]
            [:div {:class "col-md-6"}
+            [:select
+             [:option "Turtle"]
+             [:option "NQuads"]]
             [:textarea {:class "after"}]]])})
 
 (defroutes main-routes
