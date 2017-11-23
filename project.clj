@@ -15,7 +15,7 @@
                  [cheshire "5.6.3"]
                  [hiccup "1.0.5"]
 
-                 [knotation-editor "0.0.15-SNAPSHOT"]]
+                 [org.knotation/knotation-editor "0.0.15-SNAPSHOT"]]
 
   :cljsbuild {:builds [{:source-paths ["src/org/knotation/fiddle"]
                         :compiler {:output-to "resources/public/js/fiddle.js"

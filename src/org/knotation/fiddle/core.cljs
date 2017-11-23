@@ -6,7 +6,7 @@
             [org.knotation.api :as api]
             [org.knotation.state :as st]
 
-            [knotation-editor.editor :as ed]))
+            [org.knotation.editor.core :as ed]))
 
 (defn debounce [f interval]
   (let [dbnc (Debouncer. f interval)]
