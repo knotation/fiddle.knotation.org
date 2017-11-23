@@ -49,7 +49,7 @@
 
 (defn compile-content-to
   [source target]
-  (let [processed (api/run-operations [(api/kn (.getValue source)) {::api/operation-type :render ::st/format :ttl}])
+  (let [processed (api/run-operations [(api/input :kn (.getValue source)) (api/output :ttl)])
         result (string/join "\n" (filter identity (map (fn [e] (->> e ::st/output ::st/lines first)) processed)))
         line-pairs (map (fn [e] [(->> e ::st/input ::st/line-number) (->> e ::st/output ::st/line-number)]) processed)]
     (.setValue target result)

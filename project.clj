@@ -20,7 +20,8 @@
   :cljsbuild {:builds [{:source-paths ["src/org/knotation/fiddle"]
                         :compiler {:output-to "resources/public/js/fiddle.js"
                                    :optimizations :whitespace
-                                   :pretty-print true}
+                                   :pretty-print true
+                                   :language-in :es5}
                         :jar true}]}
   :main org.knotation.core
   :aot [org.knotation.core])
