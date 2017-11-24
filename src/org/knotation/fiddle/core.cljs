@@ -6,44 +6,9 @@
             [org.knotation.api :as api]
             [org.knotation.state :as st]
 
-            [org.knotation.editor.core :as ed]))
-
-(defn debounce [f interval]
-  (let [dbnc (Debouncer. f interval)]
-    ;; We use apply here to support functions of various arities
-    (fn [& args] (.apply (.-fire dbnc) dbnc (to-array args)))))
-
-(defn current-line
-  [ed]
-  (.-line (.getCursor ed)))
-
-(defn highlight-by-subject!
-  [editor line]
-  (when (ed/knotation-mode? editor)
-    (letfn [(handle-of [ln] (.getLineHandle editor ln))
-            (subject-of [ln] (:subject @(.-stateAfter (handle-of ln))))
-            (blank? [ln] (empty? (.-text (handle-of ln))))]
-      (if-let [subject (and (not (blank? line)) (subject-of line))]
-        (doseq [i (ed/line-range editor)]
-          (when (and (= subject (subject-of i)) (not (blank? i)))
-            (ed/highlight-line! editor i "current-subject")))))))
-
-(defn cross->highlight!
-  [line-map editor-a editor-b]
-  (fn [_]
-    (ed/clear-line-highlights! editor-a editor-b)
-    (let [ln-from (current-line editor-a)]
-      (when-let [ln-to (get line-map ln-from)]
-        (ed/highlight-line! editor-a ln-from)
-        (ed/highlight-line! editor-b ln-to)
-        (ed/scroll-into-view! editor-b :line ln-to)))))
-
-(defn cross<->highlight!
-  [line-map editor-a editor-b]
-  (.on editor-a "cursorActivity"
-       (cross->highlight! @line-map editor-a editor-b))
-  (.on editor-b "cursorActivity"
-       (cross->highlight! (set/map-invert @line-map) editor-b editor-a)))
+            [org.knotation.editor.core :as ed]
+            [org.knotation.editor.util :as edu]
+            [org.knotation.editor.highlight :as high]))
 
 (def line-map (atom {}))
 
@@ -74,14 +39,14 @@
      ;;     (.log js/console "  " (clj->js p))))
 
      (.on editor-a "changes"
-          (debounce
+          (edu/debounce
            (fn [cs]
-             (let [ln (current-line editor-a)]
+             (let [ln (edu/current-line editor-a)]
                (compile-content-to editor-a editor-b)
-               (ed/highlight-line! editor-b ln)
-               (ed/scroll-into-view! editor-b :line ln)))
+               (high/highlight-line! editor-b ln)
+               (high/scroll-into-view! editor-b :line ln)))
            500))
 
-     (cross<->highlight! line-map editor-a editor-b)
+     (high/cross<->highlight! line-map editor-a editor-b)
      (.on editor-a "cursorActivity"
-          (fn [ed] (highlight-by-subject! ed (.-line (.getCursor ed))))))))
+          (fn [ed] (high/highlight-by-subject! ed (.-line (.getCursor ed))))))))
