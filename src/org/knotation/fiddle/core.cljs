@@ -11,11 +11,6 @@
 
 (edu/dom-loaded
  (fn []
-   (let [editor-a (ed/editor! ".before" :mode "knotation")
-         editor-b (ed/editor! ".after" :mode "turtle")]
-
-     (update/compile-content-to line-map editor-a editor-b)
-     (update/cross->update! line-map editor-a editor-b)
-
-     (high/cross<->highlight! line-map editor-a editor-b)
-     (high/subject-highlight-on-move! editor-a))))
+   (ed/linked
+    [(ed/editor! ".before" :mode "knotation")
+     (ed/editor! ".after" :mode "turtle")])))
