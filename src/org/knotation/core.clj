@@ -22,42 +22,51 @@
             [:textarea {:class "before"}
              "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+@prefix owl: <http://www.w3.org/2002/07/owl#>
 @prefix obo: <http://purl.obolibrary.org/obo/>
-@prefix knp: <https://knotation.org/predicate/>
 @prefix knd: <https://knotation.org/datatype/>
+@prefix knp: <https://knotation.org/predicate/>
 @prefix ex: <https://example.com/>
 
 : rdfs:label
 rdfs:label: label
+rdfs:comment: Multi
+ line
+ 
+  string
+
+: knd:link
+label: link
+
+: knd:omn
+label: OWL Manchester Syntax
 
 : knp:default-datatype
 label: default datatype
-default datatype: knd:datatype
+default datatype; link: link
 
 : rdf:type
 label: type
-default datatype: knd:link
-
-: obo:NCBITaxon_9615
-label: Canis lupus familiaris
-
-: obo:BFO_0000050
-label: part of
 default datatype: link
+
+: rdfs:subClassOf
+label: subclass of
+default datatype: OWL Manchester Syntax
+
+: obo:RO_0002162
+label: in taxon
+
+: obo:NCBITaxon_56313
+label: Tyto alba
 
 : obo:UBERON_0000033
 label: head
 
-: ex:laika
-label: Laika
-label; @ru: Лайка
-type: Canis lupus familiaris
-
-: ex:laikas-head
-label: Laika's head
-type: head
-part of: Laika
-"]]
+: ex:owl-head
+label: owl head
+type: owl:Class
+subclass of: head and
+ ('in taxon' some 'Tyto alba')"]]
            [:div {:class "col-md-6"}
             [:select
              [:option "Turtle"]
