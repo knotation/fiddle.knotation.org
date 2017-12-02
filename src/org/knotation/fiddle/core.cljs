@@ -7,8 +7,6 @@
             [org.knotation.editor.highlight :as high]
             [org.knotation.editor.update :as update]))
 
-(def line-map (atom {}))
-
 (edu/dom-loaded
  (fn []
    (ed/linked

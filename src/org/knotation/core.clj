@@ -13,9 +13,12 @@
    :body (pg/html5
           {:lang "en"}
           [:head
+           [:meta {:charset "utf-8"}]
+           [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge"}]
            [:title "fiddle.knotation"]
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
-           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]]
+           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
+           [:style ".col-md-6 .CodeMirror { height: 90vh; }"]]
           [:body
            [:div {:class "col-md-6"}
             [:select [:option "Input 1"]]
@@ -32,7 +35,7 @@
 rdfs:label: label
 rdfs:comment: Multi
  line
- 
+
   string
 
 : knd:link
