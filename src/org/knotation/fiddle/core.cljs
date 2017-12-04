@@ -9,6 +9,7 @@
 
 (edu/dom-loaded
  (fn []
-   (ed/linked
-    [(ed/editor! ".before" :mode "knotation")
-     (ed/editor! ".after" :mode "turtle")])))
+   (let [kn (ed/editor! ".before" :mode "knotation")
+         ttl (ed/editor! ".after" :mode "turtle")]
+     (.setOption ttl "readOnly" true)
+     (ed/linked [kn ttl]))))

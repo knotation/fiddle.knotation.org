@@ -18,10 +18,10 @@
            [:title "fiddle.knotation"]
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
            [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
-           [:style ".col-md-6 .CodeMirror { height: 90vh; }"]]
+           [:style ".col-md-6 .CodeMirror { height: 100vh; }"]]
           [:body
            [:div {:class "col-md-6"}
-            [:select [:option "Input 1"]]
+            ;[:select [:option "Input 1"]]
             [:textarea {:class "before"}
              "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -33,10 +33,6 @@
 
 : rdfs:label
 rdfs:label: label
-rdfs:comment: Multi
- line
-
-  string
 
 : knd:link
 label: link
@@ -71,9 +67,9 @@ type: owl:Class
 subclass of: head and
  ('in taxon' some 'Tyto alba')"]]
            [:div {:class "col-md-6"}
-            [:select
-             [:option "Turtle"]
-             [:option "NQuads"]]
+            ;[:select
+            ; [:option "Turtle"]
+            ; [:option "NQuads"]
             [:textarea {:class "after"}]]])})
 
 (defroutes main-routes
