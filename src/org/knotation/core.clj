@@ -25,6 +25,7 @@
             [:textarea {:class "before"}
              "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 @prefix owl: <http://www.w3.org/2002/07/owl#>
 @prefix obo: <http://purl.obolibrary.org/obo/>
 @prefix knd: <https://knotation.org/datatype/>
@@ -52,20 +53,52 @@ default datatype: link
 label: subclass of
 default datatype: OWL Manchester Syntax
 
+: obo:IAO_0000115
+label: definition
+
+: obo:IAO_0000118
+label: alternative term
+
+: obo:BFO_0000050
+label: part of
+default datatype: link
+
 : obo:RO_0002162
 label: in taxon
+default datatype: link
 
 : obo:NCBITaxon_56313
 label: Tyto alba
 
-: obo:UBERON_0000033
-label: head
+: obo:UBERON_0011796
+label: primary remex feather
+definition: A remex feather that is connected to the manus
 
-: ex:owl-head
-label: owl head
+: ex:0000001
+label: length (cm)
+default datatype: xsd:real
+
+: ex:0000002
+label: coloration
+
+: ex:0000111
+label: barn owl primary remex feather
 type: owl:Class
-subclass of: head and
- ('in taxon' some 'Tyto alba')"]]
+definition: A primary remex feather of a barn owl
+subclass of: 'primary remex feather' and
+ ('in taxon' some 'Tyto alba')
+alternative term; @fr: grange hibou primaire remex plume
+
+: ex:0002222
+label: barn owl 2222
+type: Tyto alba
+
+: ex:0033333
+label: sample feather 33333
+type: barn owl primary remex feather
+part of: barn owl 2222
+length (cm): 25.0
+coloration: light brown with darker bands"]]
            [:div {:class "col-md-6"}
             ;[:select
             ; [:option "Turtle"]
