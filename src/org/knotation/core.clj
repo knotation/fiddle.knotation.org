@@ -75,10 +75,14 @@ label: primary remex feather
 definition: A remex feather that is connected to the manus
 
 : ex:0000001
+label: birth date
+default datatype: xsd:date
+
+: ex:0000002
 label: length (cm)
 default datatype: xsd:real
 
-: ex:0000002
+: ex:0000003
 label: coloration
 
 : ex:0000111
@@ -92,6 +96,7 @@ alternative term; @fr: grange hibou primaire remex plume
 : ex:0002222
 label: barn owl 2222
 type: Tyto alba
+birth date: 2016-05-04
 
 : ex:0033333
 label: sample feather 33333
