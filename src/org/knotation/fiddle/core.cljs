@@ -9,7 +9,9 @@
 
 (edu/dom-loaded
  (fn []
-   (let [kn (ed/editor! ".before" :mode "knotation")
+   (let [context (ed/editor! "#context textarea" :mode "knotation")
+         content (ed/editor! "#content textarea" :mode "knotation")
          ttl (ed/editor! ".after" :mode "turtle")]
      (.setOption ttl "readOnly" true)
-     (ed/linked [kn ttl]))))
+     (ed/linked-editors :env [context] :input content :ttl ttl)
+     (.each (js/$ ".hideAfterRendering") #(.removeClass (js/$ %2) "active")))))
