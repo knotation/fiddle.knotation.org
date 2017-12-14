@@ -15,5 +15,7 @@
          nq (ed/editor! "#nq-editor" :mode "ntriples")
          rdfa (ed/editor! "#rdfa-editor" :mode "sparql")]
      (.setOption ttl "readOnly" true)
+     (.on rdfa "compiled-to"
+          (fn [ed content] (.html (js/$ "#rdfa-content") content) (.log js/console "RDFa COMPILED TO!")))
      (ed/linked-editors :env [context] :input content :ttl ttl :nq nq :rdfa rdfa)
      (.each (js/$ ".hideAfterRendering") #(.removeClass (js/$ %2) "active")))))

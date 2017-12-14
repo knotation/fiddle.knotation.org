@@ -134,6 +134,8 @@ coloration: light brown with darker bands"]}})]
                               :content [:textarea {:id "ttl-editor"}]}
                     "rdfa" {:title "RDFa Source"
                             :content [:textarea {:id "rdfa-editor"}]}
+                    "rdfa-markup" {:title "RDFa HTML"
+                                   :content [:div {:id "rdfa-content"}]}
                     "nquads" {:title "NQuads"
                               :content [:textarea {:id "nq-editor"}]}})]])})
 
