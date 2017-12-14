@@ -131,7 +131,11 @@ coloration: light brown with darker bands"]}})]
            [:div {:class "col-md-6"}
             (-tabs {"turtle" {:title "Turtle"
                               :active? true
-                              :content [:textarea {:class "after"}]}})]])})
+                              :content [:textarea {:id "ttl-editor"}]}
+                    "rdfa" {:title "RDFa Source"
+                            :content [:textarea {:id "rdfa-editor"}]}
+                    "nquads" {:title "NQuads"
+                              :content [:textarea {:id "nq-editor"}]}})]])})
 
 (defroutes main-routes
   (GET "/" [] fiddle)

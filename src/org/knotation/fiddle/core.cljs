@@ -11,7 +11,9 @@
  (fn []
    (let [context (ed/editor! "#context textarea" :mode "knotation")
          content (ed/editor! "#content textarea" :mode "knotation")
-         ttl (ed/editor! ".after" :mode "turtle")]
+         ttl (ed/editor! "#ttl-editor" :mode "turtle")
+         nq (ed/editor! "#nq-editor" :mode "ntriples")
+         rdfa (ed/editor! "#rdfa-editor" :mode "sparql")]
      (.setOption ttl "readOnly" true)
-     (ed/linked-editors :env [context] :input content :ttl ttl)
+     (ed/linked-editors :env [context] :input content :ttl ttl :nq nq :rdfa rdfa)
      (.each (js/$ ".hideAfterRendering") #(.removeClass (js/$ %2) "active")))))
