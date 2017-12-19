@@ -7,7 +7,7 @@
   (:gen-class))
 
 (defn -tabs
-  [tabs-map]
+  [tabs]
   [:span
    [:ul {:class "nav nav-tabs" :role "tablist"}
     (map
@@ -16,13 +16,13 @@
         [:a {:role "tab" :data-toggle "tab"
              :href (str "#" name) :aria-controls name}
          (:title tab)]])
-     tabs-map)]
+     (partition 2 tabs))]
    [:div {:class "tab-content"}
     (map
      (fn [[name tab]]
        [:div {:role "tabpanel" :class (str "tab-pane active" (if (:active? tab) "" " hideAfterRendering")) :id name}
         (:content tab)])
-     tabs-map)]])
+     (partition 2 tabs))]])
 
 (defn fiddle
   [req]
@@ -38,11 +38,12 @@
            [:link {:rel "stylesheet" :href "/static/css/knotation.css" :media "screen"}]
            [:script {:type "text/javascript" :src "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"}]
            [:script {:type "text/javascript" :src "/static/js/bootstrap.min.js"}]
+           [:script {:type "text/javascript" :src "/static/js/viz-lite.js"}]
            [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]]
           [:body
            [:div {:class "col-md-6"}
             (-tabs
-             {"context" {:title "Context"
+             ["context" {:title "Context"
                          :content
                          [:textarea
                           "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -87,11 +88,9 @@ default datatype: link
 
 : obo:RO_0002162
 label: in taxon
-default datatype: link"]}
-              "content" {:active? true
-                         :title "Content"
-                         :content [:textarea
-                                   ": obo:NCBITaxon_56313
+default datatype: link
+
+: obo:NCBITaxon_56313
 label: Tyto alba
 
 : obo:UBERON_0011796
@@ -107,9 +106,12 @@ label: length (cm)
 default datatype: xsd:real
 
 : ex:0000003
-label: coloration
+label: coloration"]}
 
-: ex:0000111
+              "content" {:active? true
+                         :title "Content"
+                         :content [:textarea
+                                   ": ex:0000111
 label: barn owl primary remex feather
 type: owl:Class
 definition: A primary remex feather of a barn owl
@@ -127,17 +129,27 @@ label: sample feather 33333
 type: barn owl primary remex feather
 part of: barn owl 2222
 length (cm): 25.0
-coloration: light brown with darker bands"]}})]
+coloration: light brown with darker bands"]}])]
            [:div {:class "col-md-6"}
-            (-tabs {"turtle" {:title "Turtle"
+            (-tabs ["help" {:title "Help"
+                            :content [:div {:id "help-content" :class "html-content"}]}
+                    "turtle" {:title "Turtle"
                               :active? true
                               :content [:textarea {:id "ttl-editor"}]}
-                    "rdfa" {:title "RDFa Source"
+                    "rdfa-markup" {:title "HTML"
+                                   :content [:div {:id "rdfa-content" :class "html-content"}]}
+                    "rdfa" {:title "RDFa"
                             :content [:textarea {:id "rdfa-editor"}]}
-                    "rdfa-markup" {:title "RDFa HTML"
-                                   :content [:div {:id "rdfa-content"}]}
+                    "tree-markup" {:title "Tree"
+                                   :content [:div {:id "tree-content" :class "html-content"}]}
+                    "tree" {:title "JSON"
+                            :content [:textarea {:id "tree-editor"}]}
+                    "dot-markup" {:title "Graph"
+                                   :content [:div {:id "dot-content" :class "html-content"}]}
+                    "dot" {:title "DOT"
+                            :content [:textarea {:id "dot-editor"}]}
                     "nquads" {:title "NQuads"
-                              :content [:textarea {:id "nq-editor"}]}})]])})
+                              :content [:textarea {:id "nq-editor"}]}])]])})
 
 (defroutes main-routes
   (GET "/" [] fiddle)

@@ -1,4 +1,25 @@
-.col-md-6 .CodeMirror { height: 90vh; }
+.col-md-6 {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.col-md-6 .CodeMirror {
+  height: 90vh;
+}
+
+.html-content {
+  height: 90vh;
+  overflow-y: scroll;
+  padding: 0.5em;
+}
+
+.html-content h3 {
+  margin-top: 0;
+}
+
+#rdfa-content ul li:first-child {
+  font-weight: bold;
+}
 
 .tab-content {
   border-right: 1px solid #ddd;

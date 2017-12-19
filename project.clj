@@ -15,6 +15,7 @@
                  [cheshire "5.6.3"]
                  [hiccup "1.0.5"]
 
+                 [cljsjs/bootstrap-treeview "1.2.0-1"]
                  [org.knotation/knotation-editor "1.0.0-SNAPSHOT"]]
 
   :cljsbuild {:builds [{:source-paths ["src/org/knotation/fiddle"]
