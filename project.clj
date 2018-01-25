@@ -5,8 +5,8 @@
             :url "https://opensource.org/licenses/BSD-3-Clause"}
   :plugins [[lein-cljsbuild "1.1.6"]]
   :hooks [leiningen.cljsbuild]
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.521"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.9.946"]
 
                  [http-kit "2.1.18"]
                  [compojure "1.5.1"]
@@ -15,7 +15,8 @@
                  [cheshire "5.6.3"]
                  [hiccup "1.0.5"]
 
-                 [org.knotation/knotation-editor "0.0.15-SNAPSHOT"]]
+                 [cljsjs/bootstrap-treeview "1.2.0-1"]
+                 [org.knotation/knotation-editor "1.0.0-SNAPSHOT"]]
 
   :cljsbuild {:builds [{:source-paths ["src/org/knotation/fiddle"]
                         :compiler {:output-to "resources/public/js/fiddle.js"

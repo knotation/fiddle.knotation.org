@@ -6,6 +6,24 @@
   (:use [compojure.core :only [defroutes GET POST DELETE ANY context]])
   (:gen-class))
 
+(defn -tabs
+  [tabs]
+  [:span
+   [:ul {:class "nav nav-tabs" :role "tablist"}
+    (map
+     (fn [[name tab]]
+       [:li {:role "presentation" :class (when (:active? tab) "active")}
+        [:a {:role "tab" :data-toggle "tab"
+             :href (str "#" name) :aria-controls name}
+         (:title tab)]])
+     (partition 2 tabs))]
+   [:div {:class "tab-content"}
+    (map
+     (fn [[name tab]]
+       [:div {:role "tabpanel" :class (str "tab-pane active" (if (:active? tab) "" " hideAfterRendering")) :id name}
+        (:content tab)])
+     (partition 2 tabs))]])
+
 (defn fiddle
   [req]
   {:status 200
@@ -17,13 +35,18 @@
            [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge"}]
            [:title "fiddle.knotation"]
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
-           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
-           [:style ".col-md-6 .CodeMirror { height: 100vh; }"]]
+           [:link {:rel "stylesheet" :href "/static/css/knotation.css" :media "screen"}]
+           [:script {:type "text/javascript" :src "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"}]
+           [:script {:type "text/javascript" :src "/static/js/bootstrap.min.js"}]
+           [:script {:type "text/javascript" :src "/static/js/viz-lite.js"}]
+           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]]
           [:body
            [:div {:class "col-md-6"}
-            ;[:select [:option "Input 1"]]
-            [:textarea {:class "before"}
-             "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            (-tabs
+             ["context" {:title "Context"
+                         :content
+                         [:textarea
+                          "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 @prefix owl: <http://www.w3.org/2002/07/owl#>
@@ -83,9 +106,12 @@ label: length (cm)
 default datatype: xsd:real
 
 : ex:0000003
-label: coloration
+label: coloration"]}
 
-: ex:0000111
+              "content" {:active? true
+                         :title "Content"
+                         :content [:textarea
+                                   ": ex:0000111
 label: barn owl primary remex feather
 type: owl:Class
 definition: A primary remex feather of a barn owl
@@ -103,12 +129,27 @@ label: sample feather 33333
 type: barn owl primary remex feather
 part of: barn owl 2222
 length (cm): 25.0
-coloration: light brown with darker bands"]]
+coloration: light brown with darker bands"]}])]
            [:div {:class "col-md-6"}
-            ;[:select
-            ; [:option "Turtle"]
-            ; [:option "NQuads"]
-            [:textarea {:class "after"}]]])})
+            (-tabs ["help" {:title "Help"
+                            :content [:div {:id "help-content" :class "html-content"}]}
+                    "turtle" {:title "Turtle"
+                              :active? true
+                              :content [:textarea {:id "ttl-editor"}]}
+                    "rdfa-markup" {:title "HTML"
+                                   :content [:div {:id "rdfa-content" :class "html-content"}]}
+                    "rdfa" {:title "RDFa"
+                            :content [:textarea {:id "rdfa-editor"}]}
+                    "tree-markup" {:title "Tree"
+                                   :content [:div {:id "tree-content" :class "html-content"}]}
+                    "tree" {:title "JSON"
+                            :content [:textarea {:id "tree-editor"}]}
+                    "dot-markup" {:title "Graph"
+                                   :content [:div {:id "dot-content" :class "html-content"}]}
+                    "dot" {:title "DOT"
+                            :content [:textarea {:id "dot-editor"}]}
+                    "nquads" {:title "NQuads"
+                              :content [:textarea {:id "nq-editor"}]}])]])})
 
 (defroutes main-routes
   (GET "/" [] fiddle)
