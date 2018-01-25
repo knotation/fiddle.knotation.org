@@ -37,12 +37,13 @@
          ttl (ed/editor! "#ttl-editor" :mode "turtle")
          nq (ed/editor! "#nq-editor" :mode "ntriples")
          rdfa (ed/editor! "#rdfa-editor" :mode "sparql")
-         tree (ed/editor! "#tree-editor" :mode "json")
+         tree (ed/editor! "#tree-editor" :mode "tree.json")
          dot (ed/editor! "#dot-editor" :mode "dot")]
      (.setOption ttl "readOnly" true)
      (.setOption nq "readOnly" true)
      (.setOption rdfa "readOnly" true)
      (.setOption tree "readOnly" true)
+     (.setOption dot "readOnly" true)
      (.treeview (js/$ "#tree-content") (clj->js {"data" [] "showBorder" false}))
      (.html (js/$ "#help-content") help-message)
      (.on content "cursorActivity"
@@ -59,7 +60,6 @@
      (.on rdfa "compiled-to"
           (fn [ed content]
             (.html (js/$ "#rdfa-content") content)))
-            ;(.log js/console "RDFa COMPILED TO!")))
      (.on tree "compiled-to"
           (fn [ed content]
             (.treeview (js/$ "#tree-content") "remove")
@@ -70,12 +70,5 @@
      (.on dot "compiled-to"
           (fn [ed content]
             (.html (js/$ "#dot-content") (js/Viz content))))
-     (ed/linked-editors
-      :env [context]
-      :input content
-      :ttl ttl
-      :nq nq
-      :rdfa rdfa
-      :tree tree
-      :dot dot)
+     (ed/link! context content ttl nq rdfa tree dot)
      (.each (js/$ ".hideAfterRendering") #(.removeClass (js/$ %2) "active")))))
