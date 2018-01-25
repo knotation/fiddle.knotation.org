@@ -5,8 +5,8 @@
             :url "https://opensource.org/licenses/BSD-3-Clause"}
   :plugins [[lein-cljsbuild "1.1.6"]]
   :hooks [leiningen.cljsbuild]
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.521"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.9.946"]
 
                  [http-kit "2.1.18"]
                  [compojure "1.5.1"]
