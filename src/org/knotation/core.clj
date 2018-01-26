@@ -1,28 +1,12 @@
 (ns org.knotation.core
   (:require [org.httpkit.server :as server]
             [compojure.route :as route]
-            [hiccup.page :as pg])
+            [hiccup.page :as pg]
+
+            [org.knotation.fiddle.components :as comp])
 
   (:use [compojure.core :only [defroutes GET POST DELETE ANY context]])
   (:gen-class))
-
-(defn -tabs
-  [tabs]
-  [:span
-   [:ul {:class "nav nav-tabs" :role "tablist"}
-    (map
-     (fn [[name tab]]
-       [:li {:role "presentation" :class (when (:active? tab) "active")}
-        [:a {:role "tab" :data-toggle "tab"
-             :href (str "#" name) :aria-controls name}
-         (:title tab)]])
-     (partition 2 tabs))]
-   [:div {:class "tab-content"}
-    (map
-     (fn [[name tab]]
-       [:div {:role "tabpanel" :class (str "tab-pane active" (if (:active? tab) "" " hideAfterRendering")) :id name}
-        (:content tab)])
-     (partition 2 tabs))]])
 
 (defn fiddle
   [req]
@@ -36,13 +20,11 @@
            [:title "fiddle.knotation"]
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
            [:link {:rel "stylesheet" :href "/static/css/knotation.css" :media "screen"}]
-           [:script {:type "text/javascript" :src "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"}]
-           [:script {:type "text/javascript" :src "/static/js/bootstrap.min.js"}]
-           [:script {:type "text/javascript" :src "/static/js/viz-lite.js"}]
-           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]]
+           [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
+           [:script {:type "text/javascript" :src "/static/js/bootstrap.min.js"}]]
           [:body
            [:div {:class "col-md-6"}
-            (-tabs
+            (comp/tabs
              ["context" {:title "Context"
                          :content
                          [:textarea
@@ -131,25 +113,27 @@ part of: barn owl 2222
 length (cm): 25.0
 coloration: light brown with darker bands"]}])]
            [:div {:class "col-md-6"}
-            (-tabs ["help" {:title "Help"
-                            :content [:div {:id "help-content" :class "html-content"}]}
-                    "turtle" {:title "Turtle"
-                              :active? true
-                              :content [:textarea {:id "ttl-editor"}]}
-                    "rdfa-markup" {:title "HTML"
-                                   :content [:div {:id "rdfa-content" :class "html-content"}]}
-                    "rdfa" {:title "RDFa"
-                            :content [:textarea {:id "rdfa-editor"}]}
-                    "tree-markup" {:title "Tree"
-                                   :content [:div {:id "tree-content" :class "html-content"}]}
-                    "tree" {:title "JSON"
-                            :content [:textarea {:id "tree-editor"}]}
-                    "dot-markup" {:title "Graph"
-                                   :content [:div {:id "dot-content" :class "html-content"}]}
-                    "dot" {:title "DOT"
-                            :content [:textarea {:id "dot-editor"}]}
-                    "nquads" {:title "NQuads"
-                              :content [:textarea {:id "nq-editor"}]}])]])})
+            (comp/tabs
+             {:menu-type :dropdown}
+             ["help" {:title "Help"
+                      :content [:div {:id "help-content" :class "html-content"}]}
+              "turtle" {:title "Turtle"
+                        :active? true
+                        :content [:textarea {:id "ttl-editor"}]}
+              "rdfa-markup" {:title "HTML"
+                             :content [:div {:id "rdfa-content" :class "html-content"}]}
+              "rdfa" {:title "RDFa"
+                      :content [:textarea {:id "rdfa-editor"}]}
+              "tree-markup" {:title "Tree"
+                             :content [:div {:id "tree-content" :class "html-content"}]}
+              "tree" {:title "JSON"
+                      :content [:textarea {:id "tree-editor"}]}
+              "dot-markup" {:title "Graph"
+                            :content [:div {:id "dot-content" :class "html-content"}]}
+              "dot" {:title "DOT"
+                     :content [:textarea {:id "dot-editor"}]}
+              "nquads" {:title "NQuads"
+                        :content [:textarea {:id "nq-editor"}]}])]])})
 
 (defroutes main-routes
   (GET "/" [] fiddle)

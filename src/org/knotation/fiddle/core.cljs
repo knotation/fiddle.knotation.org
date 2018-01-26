@@ -2,7 +2,10 @@
   (:import [goog.async Debouncer])
   (:require [clojure.string :as string]
 
+            [org.knotation.fiddle.vizlite]
+
             [cljsjs.bootstrap-treeview]
+            ;; [cljsjs.jquery]
             [org.knotation.info :as info]
             [org.knotation.editor.core :as ed]
             [org.knotation.editor.util :as edu]
