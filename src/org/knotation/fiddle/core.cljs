@@ -42,10 +42,12 @@
                  (.removeClass (.find tab-content ".active") "active")
                  (.addClass (.find tab-content (str "#" tab-name)) "active"))))))
 
+(def firefox? (> (.search (.-userAgent js/navigator) "Firefox") -1))
+
 (edu/dom-loaded
  (fn []
-
-   (.each (js/$ ".tab-container") (fn [ix el] (setup-tabs! el)))
+   (when (not firefox?)
+     (.each (js/$ ".tab-container") (fn [ix el] (setup-tabs! el))))
 
    (let [context (ed/editor! "#context textarea" :mode "knotation")
          content (ed/editor! "#content textarea" :mode "knotation")
