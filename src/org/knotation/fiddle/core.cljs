@@ -31,10 +31,22 @@
   </ul>
   <p>Use the interactive editor to learn more. Click on a line for details.</p>
   <p>Please give us your feedback on our <a href='https://groups.google.com/d/forum/knotation'>mailing list</a> or <a href='https://github.com/knotation/knotation-cljc'>issue tracker</a>.</p>
-</div>")
+  </div>")
+
+(defn setup-tabs! [tab-container]
+  (let [dropdown (.find (js/$ tab-container) "select")
+        tab-content (.find (js/$ tab-container) ".tab-content")]
+    (.change dropdown
+             (fn [ev]
+               (let [tab-name (.val (js/$ (.-target ev)))]
+                 (.removeClass (.find tab-content ".active") "active")
+                 (.addClass (.find tab-content (str "#" tab-name)) "active"))))))
 
 (edu/dom-loaded
  (fn []
+
+   (.each (js/$ ".tab-container") (fn [ix el] (setup-tabs! el)))
+
    (let [context (ed/editor! "#context textarea" :mode "knotation")
          content (ed/editor! "#content textarea" :mode "knotation")
          ttl (ed/editor! "#ttl-editor" :mode "turtle")
@@ -48,7 +60,9 @@
      (.setOption tree "readOnly" true)
      (.setOption dot "readOnly" true)
      (.treeview (js/$ "#tree-content") (clj->js {"data" [] "showBorder" false}))
-     (.html (js/$ "#help-content") help-message)
+     (.html
+      (js/$ "#help-content")
+      help-message)
      (.on content "cursorActivity"
           (fn [ed]
             (->> ed

@@ -4,7 +4,7 @@
   ([tabs-map] (tabs {} tabs-map))
   ([{:keys [menu-type] :or {menu-type :tabs}} tabs-map]
    (let [tabs-map (partition 2 tabs-map)]
-     [:span
+     [:span {:class "tab-container"}
       (case menu-type
         :tabs [:ul {:class "nav nav-tabs" :role "tablist"}
                (map
@@ -18,7 +18,7 @@
                    (map
                     (fn [[name tab]]
                       [:option (let [opts {:role "tab" :data-toggle "tab"
-                                           :href (str "#" name) :aria-controls name :class (when (:active? tab) "active")}]
+                                           :value name :href (str "#" name) :aria-controls name :class (when (:active? tab) "active")}]
                                  (if (:active? tab) (assoc opts :selected "selected") opts))
                        (:title tab)])
                     tabs-map)])
