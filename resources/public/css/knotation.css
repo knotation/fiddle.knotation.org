@@ -4,11 +4,11 @@
 }
 
 .col-md-6 .CodeMirror {
-  height: 90vh;
+  height: 75vh;
 }
 
 .html-content {
-  height: 90vh;
+  height: 75vh;
   overflow-y: scroll;
   padding: 0.5em;
 }

@@ -20,9 +20,39 @@
            [:title "fiddle.knotation"]
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
            [:link {:rel "stylesheet" :href "/static/css/knotation.css" :media "screen"}]
+
+           [:link {:rel "stylesheet" :href "https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css"}]
+           "<!--[if lt IE 9]>
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.ie.min.css\" />
+<![endif]-->"
+
            [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
            [:script {:type "text/javascript" :src "/static/js/bootstrap.min.js"}]]
           [:body
+
+           [:nav {:class "navbar navbar-default"}
+            [:div {:class "container-fluid"}
+             [:div {:class "navbar-header"}
+              [:button {:type "button" :class "navbar-toggle collapsed" :data-toggle "collapse" :data-target "#navbar" :aria-expanded "false" :aria-controls "navbar"}
+               [:span {:class "sr-only"} "Toggle navigation"]
+               [:span {:class "icon-bar"}]
+               [:span {:class "icon-bar"}]
+               [:span {:class "icon-bar"}]]]
+             [:div {:id "navbar" :class "navbar-collapse collapse"}
+              [:ul {:class "nav navbar-nav"}
+               [:li [:a {:href "https://knotation.org"} "Knotation"]]
+               [:li [:a {:href "https://fiddle.knotation.org/"} "Fiddle Beta"]]
+               [:li [:a {:href "/"} "New"]]
+               [:li [:a {:href "#"} "Examples"]]]]]]
+
+           ;; Using https://github.com/simonwhitaker/github-fork-ribbon-css
+           [:a {:class "github-fork-ribbon"
+                :href "https://github.com/knotation/fiddle.knotation.org"
+                :data-ribbon "Fork me on GitHub"
+                :title "Fork me on GitHub"}
+            "Fork me on Github"]
+
+
            [:div {:class "col-md-6"}
             (comp/tabs
              ["context" {:title "Context"
