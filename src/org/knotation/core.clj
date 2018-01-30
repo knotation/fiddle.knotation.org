@@ -21,6 +21,7 @@
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
            [:link {:rel "stylesheet" :href "/static/css/knotation.css" :media "screen"}]
 
+           ;; Using https://github.com/simonwhitaker/github-fork-ribbon-css
            [:link {:rel "stylesheet" :href "https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css"}]
            "<!--[if lt IE 9]>
     <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.ie.min.css\" />
@@ -37,13 +38,17 @@
                [:span {:class "sr-only"} "Toggle navigation"]
                [:span {:class "icon-bar"}]
                [:span {:class "icon-bar"}]
-               [:span {:class "icon-bar"}]]]
+               [:span {:class "icon-bar"}]]
+              [:a {:href "https://knotation.org" :class "navbar-brand"} "Knotation"]]
              [:div {:id "navbar" :class "navbar-collapse collapse"}
               [:ul {:class "nav navbar-nav"}
-               [:li [:a {:href "https://knotation.org"} "Knotation"]]
                [:li [:a {:href "https://fiddle.knotation.org/"} "Fiddle Beta"]]
                [:li [:a {:href "/"} "New"]]
-               [:li [:a {:href "#"} "Examples"]]]]]]
+               [:li [:a {:href "#" :class "dropdown-toggle" :data-toggle "dropdown" :role "button" :aria-haspopup "true" :aria-expanded "false"}
+                     "Examples" [:span {:class "caret"}]]
+                [:ul {:class "dropdown-menu"}
+                 [:li [:a {:href "#D"} "D"]]
+                 [:li [:a {:href "#default"} "default"]]]]]]]]
 
            ;; Using https://github.com/simonwhitaker/github-fork-ribbon-css
            [:a {:class "github-fork-ribbon"
