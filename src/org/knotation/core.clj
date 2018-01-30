@@ -1,5 +1,7 @@
 (ns org.knotation.core
-  (:require [org.httpkit.server :as server]
+  (:require [clojure.java.io :as io]
+
+            [org.httpkit.server :as server]
             [compojure.route :as route]
             [hiccup.page :as pg]
 
@@ -7,6 +9,10 @@
 
   (:use [compojure.core :only [defroutes GET POST DELETE ANY context]])
   (:gen-class))
+
+(defn get-example-dirs
+  []
+  (map #(.getName %) (.listFiles (io/file (io/resource "public/example")))))
 
 (defn fiddle
   [req]
@@ -47,8 +53,9 @@
                [:li [:a {:href "#" :class "dropdown-toggle" :data-toggle "dropdown" :role "button" :aria-haspopup "true" :aria-expanded "false"}
                      "Examples" [:span {:class "caret"}]]
                 [:ul {:class "dropdown-menu"}
-                 [:li [:a {:href "#D"} "D"]]
-                 [:li [:a {:href "#default"} "default"]]]]]]]]
+                 (map
+                  (fn [dir-name] [:li [:a {:href (str "#" dir-name)} dir-name]])
+                  (get-example-dirs))]]]]]]
 
            ;; Using https://github.com/simonwhitaker/github-fork-ribbon-css
            [:a {:class "github-fork-ribbon"
