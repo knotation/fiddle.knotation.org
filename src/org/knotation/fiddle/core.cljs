@@ -1,6 +1,7 @@
 (ns org.knotation.fiddle.core
   (:import [goog.async Debouncer])
   (:require [clojure.string :as string]
+            [markdown.core :as md]
 
             [org.knotation.fiddle.vizlite]
 
@@ -12,27 +13,6 @@
             [org.knotation.editor.highlight :as high]
             [org.knotation.editor.update :as update]))
 
-(def help-message
-  "<div id='content_message' class='hidden'>
-  <h3>Knotation is ...</h3>
-  <ul>
-    <li>a text format that's easy for people and machines to read and write</li>
-    <li>a tool for working wth <a href='https://linkeddata.org'>Linked Data</a> and <a href='https://)) en.wikipedia.org/wiki/Ontology_(information_science'>ontologies</a></li>
-    <li>a concrete syntax for <a href='https://www.w3.org/RDF/'>RDF</a> and <a href='https://www.w3.) org/OWL/'>OWL</a></li>
-    <li>free and open source</li>
-    <li><strong>work in progress!</strong></li>
-  </ul>
-  <h4>Knotation combines the best features of ...</h4>
-  <ul>
-    <li><a href='https://en.wikipedia.org/wiki/Turtle_(syntax'>Turtle</a>: prefixed names, subject stanzas, multiline strings, comments</li>
-    <li><a href='https://json-ld.org'>JSON-LD</a>: labels, default datatypes, contexts</li>
-    <li><a href='https://www.w3.org/TR/owl2-manchester-syntax/'>Manchester</a>: human-readable OWL expressions</li>
-    <li><a href='https://yaml.org'>YAML</a>: lightweight line-based syntax</li>
-  </ul>
-  <p>Use the interactive editor to learn more. Click on a line for details.</p>
-  <p>Please give us your feedback on our <a href='https://groups.google.com/d/forum/knotation'>mailing list</a> or <a href='https://github.com/knotation/knotation-cljc'>issue tracker</a>.</p>
-  </div>")
-
 (defn setup-tabs! [tab-container]
   (let [dropdown (.find (js/$ tab-container) "select")
         tab-content (.find (js/$ tab-container) ".tab-content")]
@@ -41,6 +21,20 @@
                (let [tab-name (.val (js/$ (.-target ev)))]
                  (.removeClass (.find tab-content ".active") "active")
                  (.addClass (.find tab-content (str "#" tab-name)) "active"))))))
+
+(defn get-example!
+  [content context help example-name]
+  (let [get! (fn [file cb]
+               (.get js/$ (str "/static/example/" example-name "/" file) cb))]
+    (get! "content.kn" (fn [data] (.setValue content data)))
+    (get! "context.kn" (fn [data] (.setValue context data)))
+    (get! "README.md" (fn [data] (.html help (md/md->html data))))))
+
+(defn load-example-from-hash!
+  [content context about]
+  (let [hash (subs (->> js/window .-location .-hash) 1)
+        ex-name (if (empty? hash) "default" hash)]
+    (get-example! content context about ex-name)))
 
 (def firefox? (> (.search (.-userAgent js/navigator) "Firefox") -1))
 
@@ -51,6 +45,7 @@
 
    (let [context (ed/editor! "#context textarea" :mode "knotation")
          content (ed/editor! "#content textarea" :mode "knotation")
+         help (js/$ "#help-content")
          ttl (ed/editor! "#ttl-editor" :mode "turtle")
          nq (ed/editor! "#nq-editor" :mode "ntriples")
          rdfa (ed/editor! "#rdfa-editor" :mode "sparql")
@@ -61,10 +56,8 @@
      (.setOption rdfa "readOnly" true)
      (.setOption tree "readOnly" true)
      (.setOption dot "readOnly" true)
+
      (.treeview (js/$ "#tree-content") (clj->js {"data" [] "showBorder" false}))
-     (.html
-      (js/$ "#help-content")
-      help-message)
      (.on content "cursorActivity"
           (fn [ed]
             (->> ed
@@ -74,8 +67,8 @@
                  (.getCompiledLine (.-knotation ed))
                  info/help
                  info/html
-                 (.html (js/$ "#help-content")))))
-     (.html (js/$ "#help-content"))
+                 (.html help))))
+     (.html help)
      (.on rdfa "compiled-to"
           (fn [ed content]
             (.html (js/$ "#rdfa-content") content)))
@@ -90,4 +83,9 @@
           (fn [ed content]
             (.html (js/$ "#dot-content") (js/Viz content))))
      (ed/link! context content ttl nq rdfa tree dot)
-     (.each (js/$ ".hideAfterRendering") #(.removeClass (js/$ %2) "active")))))
+
+     (load-example-from-hash! content context (js/$ "#about-content"))
+     (.on (js/$ js/window) "hashchange"
+          #(load-example-from-hash! content context (js/$ "#about-content")))
+
+     (.removeClass (js/$ ".hideAfterRendering") "active"))))

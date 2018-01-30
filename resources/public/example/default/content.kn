@@ -1,0 +1,19 @@
+: ex:0000111
+label: barn owl primary remex feather
+type: owl:Class
+definition: A primary remex feather of a barn owl
+subclass of: 'primary remex feather' and
+ ('in taxon' some 'Tyto alba')
+alternative term; @fr: grange hibou primaire remex plume
+
+: ex:0002222
+label: barn owl 2222
+type: Tyto alba
+birth date: 2016-05-04
+
+: ex:0033333
+label: sample feather 33333
+type: barn owl primary remex feather
+part of: barn owl 2222
+length (cm): 25.0
+coloration: light brown with darker bands
