@@ -30,7 +30,7 @@
     (get! "context.kn" (fn [data] (.setValue context data)))
     (get! "README.md" (fn [data] (.html help (md/md->html data))))))
 
-(defn load-example-from-hash!
+(defn load-example-from-page-hash!
   [content context about]
   (let [hash (subs (->> js/window .-location .-hash) 1)
         ex-name (if (empty? hash) "default" hash)]
@@ -62,16 +62,11 @@
    (let [context (ed/editor! "#context textarea" :mode "knotation")
          content (ed/editor! "#content textarea" :mode "knotation")
          help (js/$ "#help-content")
-         ttl (ed/editor! "#ttl-editor" :mode "turtle")
-         nq (ed/editor! "#nq-editor" :mode "ntriples")
-         rdfa (ed/editor! "#rdfa-editor" :mode "sparql")
-         tree (ed/editor! "#tree-editor" :mode "tree.json")
-         dot (ed/editor! "#dot-editor" :mode "dot")]
-     (.setOption ttl "readOnly" true)
-     (.setOption nq "readOnly" true)
-     (.setOption rdfa "readOnly" true)
-     (.setOption tree "readOnly" true)
-     (.setOption dot "readOnly" true)
+         ttl (ed/editor! "#ttl-editor" :mode "turtle" :read-only true)
+         nq (ed/editor! "#nq-editor" :mode "ntriples" :read-only true)
+         rdfa (ed/editor! "#rdfa-editor" :mode "sparql" :read-only true)
+         tree (ed/editor! "#tree-editor" :mode "tree.json" :read-only true)
+         dot (ed/editor! "#dot-editor" :mode "dot" :read-only true)]
 
      (.treeview (js/$ "#tree-content") (clj->js {"data" [] "showBorder" false}))
      (.on content "cursorActivity"
@@ -100,8 +95,8 @@
             (.html (js/$ "#dot-content") (js/Viz content))))
      (ed/link! context content ttl nq rdfa tree dot)
 
-     (load-example-from-hash! content context (js/$ "#about-content"))
+     (load-example-from-page-hash! content context (js/$ "#about-content"))
      (.on (js/$ js/window) "hashchange"
-          #(load-example-from-hash! content context (js/$ "#about-content")))
+          #(load-example-from-page-hash! content context (js/$ "#about-content")))
 
      (apply-hacks!))))
