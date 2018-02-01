@@ -30,9 +30,11 @@
     (get! "context.kn" (fn [data] (.setValue context data)))
     (get! "README.md" (fn [data] (.html help (md/md->html data))))))
 
+(defn page-hash [] (subs (->> js/window .-location .-hash) 1))
+
 (defn load-example-from-page-hash!
   [content context about]
-  (let [hash (subs (->> js/window .-location .-hash) 1)
+  (let [hash (page-hash)
         ex-name (if (empty? hash) "default" hash)]
     (get-example! content context about ex-name)))
 
@@ -50,12 +52,23 @@
   (when (not firefox?)
     (.each (js/$ ".tab-container") (fn [ix el] (setup-tabs! el))))
 
-  ;; Toolbar dropdown isn't opening for some reason (it does seem to
+  ;; Dropdowns in general aren't opening for some reason (they do seem to
   ;; close properly, at least). This manually sets up desired behavior with jQuery
-  (.each (js/$ ".navbar .dropdown")
-         (fn [ix elem]
-           (let [el (js/$ elem)]
-             (.click el #(.addClass el "open"))))))
+  (.each
+   (js/$ ".dropdown")
+   (fn [ix elem]
+     (let [el (js/$ elem)]
+       (.click el #(.addClass el "open")))))
+
+  ;; Button dropdowns don't remove the .active class after getting hidden, so
+  ;; we need to compensate for them.
+  (.each
+   (js/$ ".dropdown-menu")
+   (fn [ix elem]
+     (let [el (js/$ elem)]
+       (.click (js/$ (.find el "li"))
+               (fn [ev]
+                 (.removeClass (.find el "li.active") "active")))))))
 
 (edu/dom-loaded
  (fn []

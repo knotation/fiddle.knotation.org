@@ -14,14 +14,19 @@
                         :href (str "#" name) :aria-controls name}
                     (:title tab)]])
                 tabs-map)]
-        :dropdown [:select {:class "form-control" :role "tablist"}
-                   (map
-                    (fn [[name tab]]
-                      [:option (let [opts {:role "tab" :data-toggle "tab"
-                                           :value name :href (str "#" name) :aria-controls name :class (when (:active? tab) "active")}]
-                                 (if (:active? tab) (assoc opts :selected "selected") opts))
-                       (:title tab)])
-                    tabs-map)])
+        :dropdown (let [id (name (gensym "dropdown"))]
+                    [:div {:class "dropdown"}
+                     [:button {:class "btn btn-default dropdown-toggle"
+                               :type "button" :id id :data-toggle "dropdown"
+                               :aria-haspopup true :aria-expanded true}
+                      [:span {:class "current"} "Select a View"]
+                      [:span {:class "caret"}]]
+                     [:ul {:class "dropdown-menu" :aria-labelledby id}
+                      (map
+                       (fn [[name tab]]
+                         [:li [:a {:role "tab" :data-toggle "tab" :href (str "#" name) :aria-controls name}
+                               (:title tab)]])
+                       tabs-map)]]))
       [:div {:class "tab-content"}
        (map
         (fn [[name tab]]
