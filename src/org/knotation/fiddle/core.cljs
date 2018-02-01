@@ -38,11 +38,27 @@
 
 (def firefox? (> (.search (.-userAgent js/navigator) "Firefox") -1))
 
+(defn apply-hacks!
+  []
+  ;; CodeMirror doesn't re-render when hidden, so we need to start by showing
+  ;; all of them, then hiding afterwards
+  (.removeClass (js/$ ".hideAfterRendering") "active")
+
+  ;; The select-box tabs implementation doesn't work outside of Firefox
+  ;; for some reason. In order to be cross-browser, wer need to implement the
+  ;; behavior using jQuery
+  (when (not firefox?)
+    (.each (js/$ ".tab-container") (fn [ix el] (setup-tabs! el))))
+
+  ;; Toolbar dropdown isn't opening for some reason (it does seem to
+  ;; close properly, at least). This manually sets up desired behavior with jQuery
+  (.each (js/$ ".navbar .dropdown")
+         (fn [ix elem]
+           (let [el (js/$ elem)]
+             (.click el #(.addClass el "open"))))))
+
 (edu/dom-loaded
  (fn []
-   (when (not firefox?)
-     (.each (js/$ ".tab-container") (fn [ix el] (setup-tabs! el))))
-
    (let [context (ed/editor! "#context textarea" :mode "knotation")
          content (ed/editor! "#content textarea" :mode "knotation")
          help (js/$ "#help-content")
@@ -88,4 +104,4 @@
      (.on (js/$ js/window) "hashchange"
           #(load-example-from-hash! content context (js/$ "#about-content")))
 
-     (.removeClass (js/$ ".hideAfterRendering") "active"))))
+     (apply-hacks!))))
