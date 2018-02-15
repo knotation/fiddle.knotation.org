@@ -41,7 +41,7 @@
            [:link {:rel "stylesheet" :href "/static/css/knotation.css" :media "screen"}]
 
            ;; Using https://github.com/simonwhitaker/github-fork-ribbon-css
-           [:link {:rel "stylesheet" :href "https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css"}]
+           [:link {:rel "stylesheet" :href "/static/css/github-fork-ribbon.css"}]
            "<!--[if lt IE 9]>
     <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.ie.min.css\" />
 <![endif]-->"
