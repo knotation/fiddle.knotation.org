@@ -2,7 +2,7 @@
 
 (defn tabs
   ([tabs-map] (tabs {} tabs-map))
-  ([{:keys [menu-type] :or {menu-type :tabs}} tabs-map]
+  ([{:keys [menu-type default-text] :or {menu-type :tabs default-text "Select a View"}} tabs-map]
    (let [tabs-map (partition 2 tabs-map)]
      [:span {:class "tab-container"}
       (case menu-type
@@ -19,7 +19,7 @@
                      [:button {:class "btn btn-default dropdown-toggle"
                                :type "button" :id id :data-toggle "dropdown"
                                :aria-haspopup true :aria-expanded true}
-                      [:span {:class "current"} "Select a View"]
+                      [:span {:class "current"} default-text]
                       [:span {:class "caret"}]]
                      [:ul {:class "dropdown-menu" :aria-labelledby id}
                       (map

@@ -87,7 +87,7 @@
               "content" {:active? true :title "Content" :content [:textarea]}])]
            [:div {:class "col-md-6"}
             (comp/tabs
-             {:menu-type :dropdown}
+             {:menu-type :dropdown :default-text "Turtle"}
              ["about" {:title "About"
                        :content [:div {:id "about-content" :class "html-content"}]}
               "help" {:title "Help"

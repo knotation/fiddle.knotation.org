@@ -76,10 +76,12 @@
   (.each
    (js/$ ".dropdown-menu")
    (fn [ix elem]
-     (let [el (js/$ elem)]
+     (let [el (js/$ elem)
+           label (js/$ (.find (.siblings el ".dropdown-toggle") ".current"))]
        (.click (js/$ (.find el "li"))
                (fn [ev]
                  (refresh-all-editors!)
+                 (this-as ths (.html label (.-innerText ths)))
                  (.removeClass (.find el "li.active") "active")))))))
 
 (edu/dom-loaded
