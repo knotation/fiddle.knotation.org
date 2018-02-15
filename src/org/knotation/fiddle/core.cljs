@@ -41,16 +41,25 @@
 (def firefox? (> (.search (.-userAgent js/navigator) "Firefox") -1))
 
 (defn apply-hacks!
-  []
+  [refresh-all-editors!]
   ;; CodeMirror doesn't re-render when hidden, so we need to start by showing
-  ;; all of them, then hiding afterwards
+  ;; all of them, refreshing then hiding afterwards
   (.removeClass (js/$ ".hideAfterRendering") "active")
 
   ;; The select-box tabs implementation doesn't work outside of Firefox
   ;; for some reason. In order to be cross-browser, wer need to implement the
   ;; behavior using jQuery
   (when (not firefox?)
-    (.each (js/$ ".tab-container") (fn [ix el] (setup-tabs! el))))
+    (.each (js/$ ".tab-container")
+           (fn [ix el] (setup-tabs! el))))
+
+  ;; CodeMirror doesn't initially render while hidden, so we need to hit any
+  ;; newly shown editors with .refresh() otherwise they stay empty until they
+  ;; get focus
+  (.each
+   (js/$ ".nav.nav-tabs li")
+   (fn [ix elem]
+     (.click (js/$ elem) #(refresh-all-editors!))))
 
   ;; Dropdowns in general aren't opening for some reason (they do seem to
   ;; close properly, at least). This manually sets up desired behavior with jQuery
@@ -68,6 +77,7 @@
      (let [el (js/$ elem)]
        (.click (js/$ (.find el "li"))
                (fn [ev]
+                 (refresh-all-editors!)
                  (.removeClass (.find el "li.active") "active")))))))
 
 (edu/dom-loaded
@@ -80,6 +90,7 @@
          rdfa (ed/editor! "#rdfa-editor" :mode "sparql" :read-only true)
          tree (ed/editor! "#tree-editor" :mode "tree.json" :read-only true)
          dot (ed/editor! "#dot-editor" :mode "dot" :read-only true)]
+
 
      (.treeview (js/$ "#tree-content") (clj->js {"data" [] "showBorder" false}))
      (.on content "cursorActivity"
@@ -112,4 +123,9 @@
      (.on (js/$ js/window) "hashchange"
           #(load-example-from-page-hash! content context (js/$ "#about-content")))
 
-     (apply-hacks!))))
+     (apply-hacks!
+      #(js/setTimeout
+        (fn []
+          (doseq [e [context content ttl nq rdfa tree dot]]
+            (.refresh e)))
+        100)))))
