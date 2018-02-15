@@ -24,11 +24,13 @@
 
 (defn get-example!
   [content context help example-name]
-  (let [get! (fn [file cb]
-               (.get js/$ (str "/static/example/" example-name "/" file) cb))]
-    (get! "content.kn" (fn [data] (.setValue content data)))
-    (get! "context.kn" (fn [data] (.setValue context data)))
-    (get! "README.md" (fn [data] (.html help (md/md->html data))))))
+  (.get js/$ (str "/example/" example-name)
+        (fn [data]
+          (try (.setValue context (.-context data))
+               (catch js/Error e e))
+          (try (.setValue content (.-content data))
+               (catch js/Error e e))
+          (.html help (md/md->html (.-readme data))))))
 
 (defn page-hash [] (subs (->> js/window .-location .-hash) 1))
 

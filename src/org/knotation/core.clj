@@ -4,6 +4,7 @@
             [org.httpkit.server :as server]
             [compojure.route :as route]
             [hiccup.page :as pg]
+            [cheshire.core :as json]
 
             [org.knotation.fiddle.components :as comp])
 
@@ -13,6 +14,18 @@
 (defn get-example-dirs
   []
   (map #(.getName %) (.listFiles (io/file (io/resource "public/example")))))
+
+(defn get-example-resources
+  [req]
+  {:status 200
+   :headers {"Content-Type" "application/json"}
+   :body (json/encode
+          (if (io/resource (str "public/example/" (get-in req [:params :name])))
+            (let [res (fn [fname] (slurp (io/resource (str "public/example/" (get-in req [:params :name]) "/" fname))))]
+              {:content (res "content.kn")
+               :context (res "context.kn")
+               :readme (res "README.md")})
+            {:error "no such resource"}))})
 
 (defn fiddle
   [req]
@@ -99,6 +112,7 @@
 
 (defroutes main-routes
   (GET "/" [] fiddle)
+  (GET "/example/:name" [] get-example-resources)
   (route/resources "/static/"))
 
 (defn -main
