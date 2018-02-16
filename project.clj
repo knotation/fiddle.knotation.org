@@ -14,6 +14,7 @@
 
                  [cheshire "5.6.3"]
                  [hiccup "1.0.5"]
+                 [markdown-clj "1.0.2"]
 
                  [cljsjs/bootstrap-treeview "1.2.0-1"]
                  [org.knotation/knotation-editor "1.0.0-SNAPSHOT"]]

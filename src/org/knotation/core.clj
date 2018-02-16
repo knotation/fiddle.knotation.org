@@ -1,12 +1,31 @@
 (ns org.knotation.core
-  (:require [org.httpkit.server :as server]
+  (:require [clojure.java.io :as io]
+
+            [org.httpkit.server :as server]
             [compojure.route :as route]
             [hiccup.page :as pg]
+            [cheshire.core :as json]
 
             [org.knotation.fiddle.components :as comp])
 
   (:use [compojure.core :only [defroutes GET POST DELETE ANY context]])
   (:gen-class))
+
+(defn get-example-dirs
+  []
+  (map #(.getName %) (.listFiles (io/file (io/resource "public/example")))))
+
+(defn get-example-resources
+  [req]
+  {:status 200
+   :headers {"Content-Type" "application/json"}
+   :body (json/encode
+          (if (io/resource (str "public/example/" (get-in req [:params :name])))
+            (let [res (fn [fname] (slurp (io/resource (str "public/example/" (get-in req [:params :name]) "/" fname))))]
+              {:content (res "content.kn")
+               :context (res "context.kn")
+               :readme (res "README.md")})
+            {:error "no such resource"}))})
 
 (defn fiddle
   [req]
@@ -20,102 +39,58 @@
            [:title "fiddle.knotation"]
            [:link {:rel "stylesheet" :href "/static/css/bootstrap.min.css" :media "screen"}]
            [:link {:rel "stylesheet" :href "/static/css/knotation.css" :media "screen"}]
+
+           ;; Using https://github.com/simonwhitaker/github-fork-ribbon-css
+           [:link {:rel "stylesheet" :href "/static/css/github-fork-ribbon.css"}]
+           "<!--[if lt IE 9]>
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.ie.min.css\" />
+<![endif]-->"
+
            [:script {:type "text/javascript" :src "/static/js/fiddle.js"}]
            [:script {:type "text/javascript" :src "/static/js/bootstrap.min.js"}]]
           [:body
+
+           [:nav {:class "navbar navbar-default"}
+            [:div {:class "container-fluid"}
+
+             [:div {:class "navbar-header"}
+              [:button {:type "button" :class "navbar-toggle collapsed" :data-toggle "collapse" :data-target "#navbar" :aria-expanded "false" :aria-controls "navbar"}
+               [:span {:class "sr-only"} "Toggle navigation"]
+               [:span {:class "icon-bar"}]
+               [:span {:class "icon-bar"}]
+               [:span {:class "icon-bar"}]]
+              [:a {:href "https://knotation.org" :class "navbar-brand"} "Knotation"]]
+
+             [:div {:id "navbar" :class "navbar-collapse collapse"}
+              [:ul {:class "nav navbar-nav"}
+               [:li [:a {:href "https://fiddle.knotation.org/"} "Fiddle Beta"]]
+               [:li [:a {:href "/"} "New"]]
+               [:li {:class "dropdown"}
+                [:a {:href "#" :class "dropdown-toggle" :data-toggle "dropdown" :role "button" :aria-haspopup "true" :aria-expanded "false"}
+                 "Examples" [:span {:class "caret"}]]
+                [:ul {:class "dropdown-menu"}
+                 (map
+                  (fn [dir-name] [:li [:a {:href (str "#" dir-name)} dir-name]])
+                  (get-example-dirs))]]]]]]
+
+           ;; Using https://github.com/simonwhitaker/github-fork-ribbon-css
+           [:a {:class "github-fork-ribbon"
+                :href "https://github.com/knotation/fiddle.knotation.org"
+                :data-ribbon "Fork me on GitHub"
+                :title "Fork me on GitHub"}
+            "Fork me on Github"]
+
+
            [:div {:class "col-md-6"}
             (comp/tabs
-             ["context" {:title "Context"
-                         :content
-                         [:textarea
-                          "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#>
-@prefix owl: <http://www.w3.org/2002/07/owl#>
-@prefix obo: <http://purl.obolibrary.org/obo/>
-@prefix knd: <https://knotation.org/datatype/>
-@prefix knp: <https://knotation.org/predicate/>
-@prefix ex: <https://example.com/>
-
-: rdfs:label
-rdfs:label: label
-
-: knd:link
-label: link
-
-: knd:omn
-label: OWL Manchester Syntax
-
-: knp:default-datatype
-label: default datatype
-default datatype; link: link
-
-: rdf:type
-label: type
-default datatype: link
-
-: rdfs:subClassOf
-label: subclass of
-default datatype: OWL Manchester Syntax
-
-: obo:IAO_0000115
-label: definition
-
-: obo:IAO_0000118
-label: alternative term
-
-: obo:BFO_0000050
-label: part of
-default datatype: link
-
-: obo:RO_0002162
-label: in taxon
-default datatype: link
-
-: obo:NCBITaxon_56313
-label: Tyto alba
-
-: obo:UBERON_0011796
-label: primary remex feather
-definition: A remex feather that is connected to the manus
-
-: ex:0000001
-label: birth date
-default datatype: xsd:date
-
-: ex:0000002
-label: length (cm)
-default datatype: xsd:real
-
-: ex:0000003
-label: coloration"]}
-
-              "content" {:active? true
-                         :title "Content"
-                         :content [:textarea
-                                   ": ex:0000111
-label: barn owl primary remex feather
-type: owl:Class
-definition: A primary remex feather of a barn owl
-subclass of: 'primary remex feather' and
- ('in taxon' some 'Tyto alba')
-alternative term; @fr: grange hibou primaire remex plume
-
-: ex:0002222
-label: barn owl 2222
-type: Tyto alba
-birth date: 2016-05-04
-
-: ex:0033333
-label: sample feather 33333
-type: barn owl primary remex feather
-part of: barn owl 2222
-length (cm): 25.0
-coloration: light brown with darker bands"]}])]
+             ["context" {:title "Context" :content [:textarea]}
+              "content" {:active? true :title "Content" :content [:textarea]}])]
            [:div {:class "col-md-6"}
             (comp/tabs
-             {:menu-type :dropdown}
-             ["help" {:title "Help"
+             {:menu-type :dropdown :default-text "Turtle"}
+             ["about" {:title "About"
+                       :content [:div {:id "about-content" :class "html-content"}]}
+              "help" {:title "Help"
                       :content [:div {:id "help-content" :class "html-content"}]}
               "turtle" {:title "Turtle"
                         :active? true
@@ -137,6 +112,7 @@ coloration: light brown with darker bands"]}])]
 
 (defroutes main-routes
   (GET "/" [] fiddle)
+  (GET "/example/:name" [] get-example-resources)
   (route/resources "/static/"))
 
 (defn -main
